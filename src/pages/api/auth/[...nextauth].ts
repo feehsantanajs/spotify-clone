@@ -79,7 +79,7 @@ export default NextAuth({
 			clientId: process.env.SPOTIFY_CLIENT_ID as string,
 			clientSecret: process.env.SPOTIFY_CLIENT_SECRET as string,
 			authorization: {
-				url: 'https://accounts.spotify.com/authorize?',
+				url: 'https://accounts.spotify.com/authorize',
 				params: {
 					scope: scopes
 				}

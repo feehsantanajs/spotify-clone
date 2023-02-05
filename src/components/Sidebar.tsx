@@ -1,10 +1,16 @@
+import { signOut, useSession } from 'next-auth/react'
 import {House, Book, MagnifyingGlass, PlusCircle, HeartStraight, Rss} from 'phosphor-react'
 
 
 export function Sidebar(){
+
+    const {data:session} = useSession();
+
+    
     return(
         <div className="w-60 h-screen text-gray-500 text-sm p-5 border-r border-gray-900" >
            <div className='space-y-4'>
+                {session?.user && <button onClick={() =>{signOut()}}>{session.user.name} - Log Out</button>}
                 <button className='flex items-center space-x-2 hover:text-white'>
                     <House className='w-5 h-5' weight="fill" />
                     <p>Home</p>

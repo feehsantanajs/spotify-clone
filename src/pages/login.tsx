@@ -9,23 +9,12 @@ export default function Login({providers}:LoginProps){
     const { name: providerName, id:providerId } = providers?.spotify as ClientSafeProvider
 
     return(
-       
-        <button
-        className='bg-[#18D860] text-white p-5 rounded-full'
-        onClick={() => {
-            signIntoProvider(providerId, { callbackUrl: '/' })
-        }}
-    >
-        Login with {providerName}
-    </button>
-    //     <div className='flex flex-col items-center justify-center bg-black min-h-screen w-full'>
-    //         <SpotifyLogo className='w-40 h-40 text-green-500' />
-    //         {Object.values(providers).map((provider:any) =>(
-    //             <div key={provider.name}>    
-    //                 <button className='bg-[#18D860]'>Login with {provider.name}</button>
-    //             </div>
-    //         ))}
-    //    </div>
+        <div className='flex flex-col items-center justify-center bg-black min-h-screen w-full'>
+            <SpotifyLogo className='w-40 h-40 text-green-500' />
+            <button className='bg-[#18D860] text-white p-5 rounded-full transition ease-in delay-45 hover:brightness-75' onClick={() => {signIntoProvider(providerId, { callbackUrl: '/' })}}>
+                Login with {providerName}
+            </button>
+        </div>                 
     )
 }
 
