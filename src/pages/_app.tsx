@@ -1,15 +1,19 @@
-import Head from 'next/head'
+
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
-
-function MyApp({ Component, pageProps }: AppProps) {
+import { SessionProvider } from "next-auth/react"
+import Head from 'next/head'
+function MyApp({ Component,  pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <>
-      <Head>
+    <Head>
       <title>Spotify 2.0</title>
-      </Head>
+    </Head>
+    <SessionProvider session={session}>
       <Component {...pageProps} />
+    </SessionProvider>
     </>
+    
   )
 }
 
