@@ -31,47 +31,47 @@ const refreshAccessToken = async (
 	}
 }
 
-const jwtCallback: CallbacksOptions['jwt'] = async ({
-	token,
-	account,
-	user
-}) => {
-	let extendedToken: ExtendedToken
+// const jwtCallback: CallbacksOptions['jwt'] = async ({
+// 	token,
+// 	account,
+// 	user
+// }) => {
+// 	let extendedToken: ExtendedToken
 
-	// User logs in for the first time
-	if (account && user) {
-		extendedToken = {
-			...token,
-			user,
-			accessToken: account.access_token as string,
-			refreshToken: account.refresh_token as string,
-			accessTokenExpiresAt: (account.expires_at as number) * 1000 // converted to ms
-		}
+// 	// User logs in for the first time
+// 	if (account && user) {
+// 		extendedToken = {
+// 			...token,
+// 			user,
+// 			accessToken: account.access_token as string,
+// 			refreshToken: account.refresh_token as string,
+// 			accessTokenExpiresAt: (account.expires_at as number) * 1000 // converted to ms
+// 		}
 
-		console.log('FIRST TIME LOGIN, EXTENDED TOKEN: ', extendedToken)
-		return extendedToken
-	}
+// 		console.log('FIRST TIME LOGIN, EXTENDED TOKEN: ', extendedToken)
+// 		return extendedToken
+// 	}
 
-	// Subsequent requests to check auth sessions
-	if (Date.now() + 5000 < (token as ExtendedToken).accessTokenExpiresAt) {
-		console.log('ACCESS TOKEN STILL VALID, RETURNING EXTENDED TOKEN: ', token)
-		return token
-	}
+// 	// Subsequent requests to check auth sessions
+// 	if (Date.now() + 5000 < (token as ExtendedToken).accessTokenExpiresAt) {
+// 		console.log('ACCESS TOKEN STILL VALID, RETURNING EXTENDED TOKEN: ', token)
+// 		return token
+// 	}
 
-	// Access token has expired, refresh it
-	console.log('ACCESS TOKEN EXPIRED, REFRESHING...')
-	return await refreshAccessToken(token as ExtendedToken)
-}
+// 	// Access token has expired, refresh it
+// 	console.log('ACCESS TOKEN EXPIRED, REFRESHING...')
+// 	return await refreshAccessToken(token as ExtendedToken)
+// }
 
-const sessionCallback: CallbacksOptions['session'] = async ({
-	session,
-	token
-}) => {
-	session.accessToken = (token as ExtendedToken).accessToken
-	session.error = (token as ExtendedToken).error
+// const sessionCallback: CallbacksOptions['session'] = async ({
+// 	session,
+// 	token
+// }) => {
+// 	session.accessToken = (token as ExtendedToken).accessToken
+// 	session.error = (token as ExtendedToken).error
 
-	return session
-}
+// 	return session
+// }
 
 export default NextAuth({
 	providers: [
@@ -90,7 +90,26 @@ export default NextAuth({
 		signIn: '/login'
 	},
 	callbacks: {
-		jwt: jwtCallback,
-		session: sessionCallback
+		async jwt({token, account, user}){
+			let extendedToken: ExtendedToken
+			if(account && user){
+				return {
+					...token,
+					accessToken: account?.access_token,
+					refreshToken: account?.refresh_token,
+					username: account?.providerAccountId,
+					accessTokenExpiresAt: (account?.expires_at as number) * 1000 // converted to ms
+	
+				}
+			}
+			if (Date.now() + 5000 < (token as ExtendedToken).accessTokenExpiresAt) {
+						console.log('ACCESS TOKEN STILL VALID, RETURNING EXTENDED TOKEN: ', token)
+						return token
+			}
+
+			console.log('ACCESS TOKEN STILL VALID, RETURNING EXTENDED TOKEN: ')
+			return await refreshAccessToken(token as ExtendedToken)
+		}
+	
 	}
 })
